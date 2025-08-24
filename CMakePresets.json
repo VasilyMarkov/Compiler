@@ -14,7 +14,9 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
                 "CMAKE_INSTALL_PREFIX": "/usr/local",
-                "CMAKE_CXX_STANDARD": "23"
+                "CMAKE_CXX_STANDARD": "23",
+                "CMAKE_CXX_COMPILER": "clang++-19",
+                "CMAKE_CXX_FLAGS": "-stdlib=libc++"
             }
         },
         {
@@ -30,7 +32,7 @@
             "inherits": "default",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_CXX_FLAGS_DEBUG": "-Og -Wall -Wextra"
+                "CMAKE_CXX_FLAGS_DEBUG": "-Og -Wall -Wextra -Werror"
             }
         },
         {
