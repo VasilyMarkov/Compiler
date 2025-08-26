@@ -1,32 +1,44 @@
 #pragma once
+
 #include <FlexLexer.h>
 #include <sstream>
+#include "parser.hpp"
+#include "utility.hpp"
+
 namespace yy {
 
 class Lexer final : public yyFlexLexer {
 public:
-    Lexer(): 
-        yyFlexLexer() {}
+    Lexer(): yyFlexLexer() {}
 
     int yylex() override {
-        int token = yyFlexLexer::yylex();
-        return token;
+        return yyFlexLexer::yylex();
     };
 };
 
 } //namespace yy
 
-class Driver final {
+namespace compiler {
+
+class FrontEnd final {
 public:
-    explicit Driver(std::stringstream& file):
-        lexer_(std::make_unique<yy::Lexer>())
+    explicit FrontEnd(std::stringstream& file): lexer_(std::make_unique<yy::Lexer>())
     {
         lexer_->switch_streams(file, std::cout);
     }
     void parse() {
-        while (lexer_->yylex() != 0) {}
+        while (yylex() != 0) {}
+        parser_.parse();
+    }
+
+    int yylex() {
+        auto token = static_cast<tokens::token_t>(lexer_->yylex());
+        parser_.addToken(token);
+        return static_cast<int>(token);
     }
 private:
     std::unique_ptr<yy::Lexer> lexer_;
+    Parser parser_;
 };
 
+} //namespace compiler

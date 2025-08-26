@@ -1,21 +1,20 @@
 #include <iostream>
 #include <print>
-#include "lexer.hpp"  // Include the generated lexer
+#include "lexer.hpp"
 #include "utility.hpp"
 
 namespace fs = std::filesystem;
 
 int main(int argc, char *argv[]) {
 	if (argc != 2) {
-		std::cout << argc << std::endl;
-		std::cerr << "Wrong arguments!" << std::endl;
+		std::println("Wrong arguments!");
 		return 1;
 	}
 	try {
 		fs::path filePath = argv[1];
 		auto file = utility::readFile(filePath);
-		Driver driver(file);
-		driver.parse();
+		compiler::FrontEnd frontend(file);
+		frontend.parse();
 	}
 	catch(const std::exception& e) {
 		std::cerr << e.what() << std::endl;
