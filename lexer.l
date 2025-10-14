@@ -1,7 +1,6 @@
 %option c++
 %option noyywrap
 
-
 %{
 #include "tokens.hpp"
 %}
@@ -12,11 +11,13 @@ DIGIT1  [1-9]
 ID      [a-zA-Z_][a-zA-Z0-9_]*
 
 %%
+
 {WS}              /* skip blanks and tabs */
 "+"               return static_cast<int>(tokens::token_t::PLUS);
 "-"               return static_cast<int>(tokens::token_t::MINUS);
 {DIGIT1}{DIGIT}*  return static_cast<int>(tokens::token_t::NUMBER);
 {DIGIT}           return static_cast<int>(tokens::token_t::NUMBER);
 ";"               return static_cast<int>(tokens::token_t::SCOLON);
-.
+<<EOF>>           return static_cast<int>(tokens::token_t::END);
+.                 return static_cast<int>(tokens::token_t::ERROR);
 %%

@@ -10,10 +10,6 @@ namespace yy {
 class Lexer final : public yyFlexLexer {
 public:
     Lexer(): yyFlexLexer() {}
-
-    int yylex() override {
-        return yyFlexLexer::yylex();
-    };
 };
 
 } //namespace yy
@@ -27,15 +23,28 @@ public:
         lexer_->switch_streams(file, std::cout);
     }
     void parse() {
-        while (yylex() != 0) {}
+        while (yylex() != tokens::token_t::END) {}
         parser_.parse();
     }
 
-    int yylex() {
+    tokens::token_t yylex() {
         auto token = static_cast<tokens::token_t>(lexer_->yylex());
-        parser_.addToken(token);
-        return static_cast<int>(token);
+        parser_.addToken(createToken(token));
+        return token;
     }
+
+    std::unique_ptr<tokens::Token> createToken(tokens::token_t token) {
+        switch (token)
+        {
+        case tokens::token_t::PLUS:
+            return std::make_unique<tokens::PlusToken>();
+        case tokens::token_t::MINUS:
+            return std::make_unique<tokens::MinusToken>();
+        case tokens::token_t::NUMBER:
+            return std::make_unique<tokens::NumberToken>(std::stoi(lexer_->YYText()));
+        }
+    }
+
 private:
     std::unique_ptr<yy::Lexer> lexer_;
     Parser parser_;

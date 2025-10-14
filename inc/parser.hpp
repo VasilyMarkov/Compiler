@@ -1,19 +1,25 @@
 #pragma once
 #include <vector>
 #include <iostream>
+#include <functional>
 #include "tokens.hpp"
 
 namespace compiler {
 
-class Parser {
-    using TokensVec = std::vector<tokens::token_t>;
+class Parser final {
+    using TokensVec = std::vector<std::unique_ptr<tokens::Token>>;
 public:
-    explicit Parser() {}
-    void addToken(tokens::token_t token) { tokens_.push_back(token); }
+    Parser() = default;
+
+    void addToken(std::unique_ptr<tokens::Token> token){ 
+        tokens_.push_back(std::move(token)); 
+    }
+
     const TokensVec& getTokens() const { return tokens_; }
+
     void parse() {
-        for(auto&& el : tokens_) {
-            std::cout << (int)el << std::endl;
+        for(const auto& el : tokens_) {
+            std::cout << el->asString() << std::endl;
         }
     }
 private:
